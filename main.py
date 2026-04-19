@@ -74,21 +74,23 @@ def report_filters(inc,exc):
  "expression": f"{i}"
  })
  if 'na' not in exc:
- for i in exc:
- if re.fullmatch(r"\d+", i):
- campaign_filters.append({
- "name": "campaign",
- "operator": "NOT_MATCH_REGEXP",
- "expression": f"(^|[^0-9]){i}([^0-9]|$)"
- })
- else:
- campaign_filters.append({
- "name": "campaign",
- "operator": "NOT_CONTAIN",
- "expression": f"{i}"
- })
+  for i in exc:
+   if re.fullmatch(r"\d+", i):
+    campaign_filters.append({
+     "name": "campaign",
+     "operator": "NOT_MATCH_REGEXP",
+     "expression": f"(^|[^0-9]){i}([^0-9]|$)"
+    })
+   else:
+    campaign_filters.append({
+     "name": "campaign",
+     "operator": "NOT_CONTAIN",
+     "expression": f"{i}"
+    })
  for i in campaign_filters:
- report_payload["filters"].append(i)
+  report_payload["filters"].append(i)
+
+
 
 def report_build():
  report_url = f'{base_url}/report/build'
