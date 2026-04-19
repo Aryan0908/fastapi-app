@@ -118,6 +118,7 @@ def report_filters(inc,exc):
 
     for i in campaign_filters:
         report_payload["filters"].append(i)
+    print(report_payload)
 
 def report_build():
     report_url = f'{base_url}/report/build'
