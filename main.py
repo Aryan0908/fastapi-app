@@ -315,6 +315,7 @@ def run(data: RequestData):
     # 🔥 EXACT SAME FLOW (copied, not changed)
 
     report_filters(filters_include, filters_exclude)
+    print(report_payload)
     report_build()
 
     with ThreadPoolExecutor(max_workers=10) as executor:
