@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional
 from concurrent.futures import ThreadPoolExecutor
+from fastapi.middleware.cors import CORSMiddleware
 import json
 import re
 import os
@@ -273,7 +274,12 @@ def stream_update(final_stream):
 #     stream_change_add(add_camps, remove_previous, add_landings)
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 @app.post("/remove")
 def run(data: RequestData):
     campaign_filters.clear()
