@@ -14,6 +14,13 @@ api_headers = {
  "Api-Key": api
 }
 
+class AutoRequest(BaseModel):
+    action: str
+    body: Dict[str, Any]
+    time: str
+
+
+
 campaign_filters = []
 
 report_payload = {
@@ -423,3 +430,78 @@ def run(data: RequestDataAdd):
         "campaigns": active_camps,
         "updated_streams": len(updated_streams)
     }
+
+@app.get("/auto-run")
+def auto_run():
+    data = RequestData(
+        filters_include=["699", "sdf"],
+        filters_exclude=[],
+        action="replace",
+        old_landing=123,
+        new_landing=456
+    )
+    return run(data)
+
+@app.post("/auto")
+def auto_run(data: AutoRequest):
+    hour, minute = map(int, data.time.split(":"))
+    cron_expression = f"{minute} {hour} * * *"
+
+    easycron_payload = {
+        "url": f"https://fastapi-app-production-1c05.up.railway.app/{data.action}",
+        "cron_expression": cron_expression,
+        "timezone_from": 2,
+        "timezone": "Asia/Kolkata",
+        "http_method": "POST",
+        "http_headers": "Content-Type: application/json",
+        "http_message_body": json.dumps({"action": data.action, "body": data.body}),
+        "cron_job_name": f"LM-{data.action}-{data.time.replace(':', '')}"
+    }
+
+    easycron_headers = {
+        "X-API-Key": "a522ff13eefc72e3113de62607ed01b8",
+        "Content-Type": "application/json"
+    }
+
+    print(easycron_payload)
+
+    response = requests.post(
+        "https://api.easycron.com/v1/cron-jobs",
+        json=easycron_payload,
+        headers=easycron_headers
+    )
+
+    return response.json()
+
+
+# 3. New route — list cron jobs (UI calls this to show the jobs panel)
+@app.get("/cron-jobs")
+def list_cron_jobs():
+    easycron_headers = {
+        "X-API-Key": "a522ff13eefc72e3113de62607ed01b8",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(
+        "https://api.easycron.com/v1/cron-jobs?page_size=50",
+        headers=easycron_headers
+    )
+    return response.json()
+
+
+# 4. New route — delete a cron job (UI calls this on delete button click)
+@app.delete("/cron-jobs/{cron_job_id}")
+def delete_cron_job(cron_job_id: int):
+    easycron_headers = {
+        "X-API-Key": "a522ff13eefc72e3113de62607ed01b8",
+        "Content-Type": "application/json"
+    }
+    response = requests.delete(
+        f"https://api.easycron.com/v1/cron-jobs/{cron_job_id}",
+        headers=easycron_headers
+    )
+    if response.status_code == 204:
+        return {"status": "deleted", "cron_job_id": cron_job_id}
+    return {"status": "error", "detail": response.text}
+
+
+
