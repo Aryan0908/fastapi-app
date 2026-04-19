@@ -118,16 +118,14 @@ def report_filters(inc,exc):
 
     for i in campaign_filters:
         report_payload["filters"].append(i)
-    print(report_payload)
+    print(f'payload: {report_payload}')
 
 def report_build():
     report_url = f'{base_url}/report/build'
 
     response = requests.post(report_url, json=report_payload, headers=api_headers)
     full_report = response.json()
-    print(f'full report: {full_report}')
     print("Report Fetched - Successfully👍")
-    print(json.dumps(report_payload))
     camps_extraction(full_report)
 
 
@@ -302,7 +300,9 @@ def run(data: RequestData):
     # global add_camps, specific_camps, remove_previous, add_landings
 
     filters_include = data.filters_include
+    print(f'filters_include: {filters_include}')
     filters_exclude = data.filters_exclude
+    print(f'filters_exclude: {filters_exclude}')
     action = 'remove'
 
     old_landing = data.old_landing
