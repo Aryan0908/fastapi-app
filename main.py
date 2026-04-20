@@ -456,7 +456,7 @@ def auto_run(data: AutoRequest):
         "timezone": "Asia/Kolkata",
         "http_method": "POST",
         "http_headers": "Content-Type: application/json",
-        "http_message_body": json.dumps({"action": data.action, "body": data.body}),
+        "http_message_body": json.dumps("body": data.body),
         "cron_job_name": f"LM-{data.action}-{data.time.replace(':', '')}"
     }
 
