@@ -141,7 +141,7 @@ def fetch_streams(camp):
 
 def filter_streams(streams, act):
     for stream in streams:
-        if stream["state"] == "active" and stream['type'] == "regular" and len(stream['landings']) > 0:
+        if stream["state"] == "active" and stream['type'] == "regular" and len(stream['landings']) > 0 and len(stream['filters']) == 0:
             try:
                 if (act == 'replace' or act == 'remove'):
                     for landing in stream['landings']:
